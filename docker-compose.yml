@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: crypto_detection_db
+    environment:
+      POSTGRES_DB: crypto_detection
+      POSTGRES_USER: cryptouser
+      POSTGRES_PASSWORD: cryptopass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - crypto_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cryptouser"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend API Service
+  api:
+    build:
+      context: .
+      target: backend
+    container_name: crypto_detection_api
+    environment:
+      - DATABASE_URL=postgresql://cryptouser:cryptopass@db:5432/crypto_detection
+      - GHIDRA_HOME=/opt/ghidra
+    volumes:
+      - ./data:/app/data
+      - ./services:/app/services
+      - ./config:/app/config
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - crypto_network
+    restart: unless-stopped
+
+  # Frontend Dashboard
+  frontend:
+    build:
+      context: .
+      target: frontend
+      dockerfile: Dockerfile.frontend
+    container_name: crypto_detection_frontend
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000/api
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+    networks:
+      - crypto_network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  crypto_network:
+    driver: bridge

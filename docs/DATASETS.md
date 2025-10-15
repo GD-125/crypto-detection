@@ -30,9 +30,7 @@ git clone https://github.com/OWASP/IoTGoat.git
 
 **Usage**:
 ```bash
-python scripts/extract_features.py \
-    --input data/datasets/IoTGoat/ \
-    --output data/datasets/iotgoat_features/
+python scripts/extract_features.py \ --input data/datasets/IoTGoat/ \ --output data/datasets/iotgoat_features/
 ```
 
 ---
@@ -59,9 +57,7 @@ git clone https://github.com/ANSSI-FR/crypto-condor.git
 
 **Usage**:
 ```bash
-python scripts/extract_features.py \
-    --input data/datasets/crypto-condor/test-vectors/ \
-    --output data/datasets/crypto_condor_features/
+python scripts/extract_features.py \ --input data/datasets/crypto-condor/test-vectors/ \ --output data/datasets/crypto_condor_features/
 ```
 
 ---
@@ -88,9 +84,7 @@ git clone https://github.com/CyberGrandChallenge/samples.git
 
 **Usage**:
 ```bash
-python scripts/extract_features.py \
-    --input data/datasets/samples/examples/ \
-    --output data/datasets/cgc_features/
+python scripts/extract_features.py \ --input data/datasets/samples/examples/ \ --output data/datasets/cgc_features/
 ```
 
 ---
@@ -125,9 +119,7 @@ cd firmadyne
 ./download.sh
 
 # Then extract features
-python scripts/extract_features.py \
-    --input data/datasets/firmadyne/images/ \
-    --output data/datasets/firmadyne_features/
+python scripts/extract_features.py \ --input data/datasets/firmadyne/images/ \ --output data/datasets/firmadyne_features/
 ```
 
 ---
@@ -161,10 +153,7 @@ make
 
 **Usage**:
 ```bash
-python scripts/extract_features.py \
-    --input data/datasets/openssl/apps/ \
-    --output data/datasets/openssl_features/ \
-    --labels data/datasets/openssl_labels.json
+python scripts/extract_features.py \ --input data/datasets/openssl/apps/ \ --output data/datasets/openssl_features/ \ --labels data/datasets/openssl_labels.json
 ```
 
 ---
@@ -237,11 +226,7 @@ For quick testing and prototyping, use our synthetic dataset generator:
 
 ```bash
 # Generate 1000 samples
-python scripts/generate_dataset.py \
-    --output data/datasets/synthetic \
-    --num-samples 1000 \
-    --min-size 2048 \
-    --max-size 8192
+python scripts/generate_dataset.py \ --output data/datasets/synthetic \ --num-samples 1000 \ --min-size 2048 \ --max-size 8192
 ```
 
 **Features**:
@@ -277,17 +262,11 @@ cd ../..
 python scripts/generate_dataset.py --num-samples 1000
 
 # 4. Extract features
-python scripts/extract_features.py \
-    --input data/datasets/synthetic/firmware/ \
-    --output data/datasets/features/ \
-    --labels data/datasets/synthetic/metadata.json
+python scripts/extract_features.py \ --input data/datasets/synthetic/firmware/ \ --output data/datasets/features/ \ --labels data/datasets/synthetic/metadata.json
 
 # 5. Split train/test (automatic in extract_features.py)
 # Or manually:
-python scripts/split_dataset.py \
-    --features data/datasets/features/features.npy \
-    --labels data/datasets/features/labels.npy \
-    --train-split 0.8
+python scripts/split_dataset.py \ --features data/datasets/features/features.npy \ --labels data/datasets/features/labels.npy \ --train-split 0.8
 ```
 
 ---
@@ -374,10 +353,7 @@ Create `labels.json`:
 
 Use our labeling script:
 ```bash
-python scripts/auto_label.py \
-    --input data/datasets/firmware/ \
-    --output data/datasets/labels.json \
-    --method heuristic
+python scripts/auto_label.py \ --input data/datasets/firmware/ \ --output data/datasets/labels.json \ --method heuristic
 ```
 
 ---
@@ -415,9 +391,7 @@ gcc -O3 crypto.c -o crypto_O3
 ### Validation Script
 
 ```bash
-python scripts/validate_dataset.py \
-    --features data/datasets/features/features.npy \
-    --labels data/datasets/features/labels.npy
+python scripts/validate_dataset.py \ --features data/datasets/features/features.npy \ --labels data/datasets/features/labels.npy
 ```
 
 ---
@@ -445,19 +419,13 @@ git clone --depth 1 https://github.com/OWASP/IoTGoat.git
 ### Issue: Large Dataset Size
 ```bash
 # Extract only specific architectures
-python scripts/extract_features.py \
-    --input data/datasets/firmware/ \
-    --output data/datasets/features/ \
-    --arch-filter x86_64,arm
+python scripts/extract_features.py \ --input data/datasets/firmware/ \ --output data/datasets/features/ \ --arch-filter x86_64,arm
 ```
 
 ### Issue: Processing Too Slow
 ```bash
 # Enable parallel processing
-python scripts/extract_features.py \
-    --input data/datasets/firmware/ \
-    --output data/datasets/features/ \
-    --parallel 4
+python scripts/extract_features.py \ --input data/datasets/firmware/ \ --output data/datasets/features/ \ --parallel 4
 ```
 
 ---

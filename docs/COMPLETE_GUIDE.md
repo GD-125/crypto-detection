@@ -1,4 +1,4 @@
-# Complete Guide - # CRYPTERA: AI BASED CRYPTOGRAPHIC PRIMITIVES DETECTION IN FIRMWARE
+# Complete Guide - CRYPTERA: AI BASED CRYPTOGRAPHIC PRIMITIVES DETECTION IN FIRMWARE
 
 ## 📚 Documentation Index
 
@@ -8,7 +8,7 @@ This guide provides a complete roadmap for using the system. Choose your path:
 → **[QUICKSTART.md](QUICKSTART.md)** - Get running in 30 minutes
 
 ### 📖 Full Documentation
-→ **[README.md](README.md)** - System overview and architecture
+→ **[README.md](/README.md)** - System overview and architecture
 
 ### 🎓 Training & Evaluation
 → **[TRAINING_GUIDE.md](TRAINING_GUIDE.md)** - Complete training instructions

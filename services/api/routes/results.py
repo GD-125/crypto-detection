@@ -1,54 +1,64 @@
 """
 Analysis Results Routes
+DATABASE DISABLED - Using in-memory storage
 """
 
 from fastapi import APIRouter, HTTPException, Depends
-from sqlalchemy.orm import Session
+# DATABASE DISABLED
+# from sqlalchemy.orm import Session
 from typing import List, Optional
 
-from ..database import get_db
-from ..models import schemas, models
+# DATABASE DISABLED - Using in-memory storage instead
+# from ..database import get_db
+# from ..models import schemas, models
+from ..storage import get_storage
+from ..models import schemas
 
 router = APIRouter()
 
 @router.get("/{firmware_id}", response_model=schemas.AnalysisResultDetail)
-async def get_results(firmware_id: int, db: Session = Depends(get_db)):
+async def get_results(
+    firmware_id: int,
+    # DATABASE DISABLED
+    # db: Session = Depends(get_db)
+):
     """
     Get analysis results for a specific firmware
     """
-    result = db.query(models.AnalysisResult).filter(
-        models.AnalysisResult.firmware_id == firmware_id
-    ).order_by(models.AnalysisResult.analysis_time.desc()).first()
+    storage = get_storage()
+    result = storage.get_latest_analysis_by_firmware(firmware_id)
 
     if not result:
         raise HTTPException(status_code=404, detail="Analysis results not found")
 
-    return result
+    return result.to_dict()
 
 @router.get("/list/all", response_model=List[schemas.AnalysisResultSummary])
 async def list_all_results(
     skip: int = 0,
     limit: int = 100,
-    db: Session = Depends(get_db)
+    # DATABASE DISABLED
+    # db: Session = Depends(get_db)
 ):
     """
     List all analysis results
     """
-    results = db.query(models.AnalysisResult).offset(skip).limit(limit).all()
-    return results
+    storage = get_storage()
+    results = storage.list_all_analysis_results(skip=skip, limit=limit)
+    return [r.to_dict() for r in results]
 
 @router.get("/export/{firmware_id}")
 async def export_results(
     firmware_id: int,
     format: str = "json",
-    db: Session = Depends(get_db)
+    # DATABASE DISABLED
+    # db: Session = Depends(get_db)
 ):
     """
     Export analysis results in various formats (JSON, CSV, PDF)
     """
-    result = db.query(models.AnalysisResult).filter(
-        models.AnalysisResult.firmware_id == firmware_id
-    ).order_by(models.AnalysisResult.analysis_time.desc()).first()
+    storage = get_storage()
+    result = storage.get_latest_analysis_by_firmware(firmware_id)
 
     if not result:
         raise HTTPException(status_code=404, detail="Analysis results not found")

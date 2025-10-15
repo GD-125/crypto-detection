@@ -13,7 +13,8 @@ import os
 
 from .routes import firmware, analysis, results, dashboard
 from .models import schemas
-from .database import engine, Base
+# DATABASE DISABLED - Using in-memory storage
+# from .database import engine, Base
 
 # Configure logging
 logging.basicConfig(
@@ -22,8 +23,8 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Create database tables
-Base.metadata.create_all(bind=engine)
+# DATABASE DISABLED - Create database tables
+# Base.metadata.create_all(bind=engine)
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -67,7 +68,8 @@ async def health_check():
         "timestamp": datetime.utcnow().isoformat(),
         "services": {
             "api": "running",
-            "database": "connected",
+            # "database": "connected",  # DATABASE DISABLED
+            "storage": "in-memory",
             "ai_engine": "ready",
             "binary_analyzer": "ready"
         }

@@ -1,19 +1,25 @@
 """
 Firmware Upload and Management Routes
+DATABASE DISABLED - Using in-memory storage
 """
 
 from fastapi import APIRouter, File, UploadFile, HTTPException, Depends, BackgroundTasks
 from fastapi.responses import JSONResponse
-from sqlalchemy.orm import Session
+# DATABASE DISABLED
+# from sqlalchemy.orm import Session
 from typing import List
 import hashlib
 import os
 from datetime import datetime
 
-from ..database import get_db
-from ..models import schemas, models
-from ...binary_analyzer.analyzer import BinaryAnalyzer
-from ...ai_engine.inference import CryptoDetector
+# DATABASE DISABLED - Using in-memory storage instead
+# from ..database import get_db
+# from ..models import schemas, models
+from ..storage import get_storage, InMemoryStorage
+from ..models import schemas
+# Lazy imports for analysis modules (only needed when running analysis)
+# from ...binary_analyzer.analyzer import BinaryAnalyzer
+# from ...ai_engine.inference import CryptoDetector
 
 router = APIRouter()
 
@@ -23,12 +29,15 @@ UPLOAD_DIR = "data/uploads"
 async def upload_firmware(
     file: UploadFile = File(...),
     architecture: str = "auto",
-    db: Session = Depends(get_db)
+    # DATABASE DISABLED
+    # db: Session = Depends(get_db)
 ):
     """
     Upload firmware binary for analysis
     """
     try:
+        storage = get_storage()
+
         # Read file content
         content = await file.read()
 
@@ -36,9 +45,7 @@ async def upload_firmware(
         file_hash = hashlib.sha256(content).hexdigest()
 
         # Check if file already exists
-        existing = db.query(models.Firmware).filter(
-            models.Firmware.file_hash == file_hash
-        ).first()
+        existing = storage.get_firmware_by_hash(file_hash)
 
         if existing:
             return {
@@ -51,24 +58,19 @@ async def upload_firmware(
             }
 
         # Save file
+        os.makedirs(UPLOAD_DIR, exist_ok=True)
         file_path = os.path.join(UPLOAD_DIR, f"{file_hash}_{file.filename}")
         with open(file_path, "wb") as f:
             f.write(content)
 
-        # Create database entry
-        firmware = models.Firmware(
+        # Create storage entry
+        firmware = storage.add_firmware(
             filename=file.filename,
             file_path=file_path,
             file_hash=file_hash,
             file_size=len(content),
-            architecture=architecture,
-            upload_time=datetime.utcnow(),
-            status="uploaded"
+            architecture=architecture
         )
-
-        db.add(firmware)
-        db.commit()
-        db.refresh(firmware)
 
         return {
             "id": firmware.id,
@@ -86,36 +88,44 @@ async def upload_firmware(
 async def list_firmware(
     skip: int = 0,
     limit: int = 100,
-    db: Session = Depends(get_db)
+    # DATABASE DISABLED
+    # db: Session = Depends(get_db)
 ):
     """
     List all uploaded firmware files
     """
-    firmware_list = db.query(models.Firmware).offset(skip).limit(limit).all()
-    return firmware_list
+    storage = get_storage()
+    firmware_list = storage.list_firmware(skip=skip, limit=limit)
+    return [f.to_dict() for f in firmware_list]
 
 @router.get("/{firmware_id}", response_model=schemas.FirmwareInfo)
-async def get_firmware(firmware_id: int, db: Session = Depends(get_db)):
+async def get_firmware(
+    firmware_id: int,
+    # DATABASE DISABLED
+    # db: Session = Depends(get_db)
+):
     """
     Get firmware details by ID
     """
-    firmware = db.query(models.Firmware).filter(
-        models.Firmware.id == firmware_id
-    ).first()
+    storage = get_storage()
+    firmware = storage.get_firmware_by_id(firmware_id)
 
     if not firmware:
         raise HTTPException(status_code=404, detail="Firmware not found")
 
-    return firmware
+    return firmware.to_dict()
 
 @router.delete("/{firmware_id}")
-async def delete_firmware(firmware_id: int, db: Session = Depends(get_db)):
+async def delete_firmware(
+    firmware_id: int,
+    # DATABASE DISABLED
+    # db: Session = Depends(get_db)
+):
     """
     Delete firmware by ID
     """
-    firmware = db.query(models.Firmware).filter(
-        models.Firmware.id == firmware_id
-    ).first()
+    storage = get_storage()
+    firmware = storage.get_firmware_by_id(firmware_id)
 
     if not firmware:
         raise HTTPException(status_code=404, detail="Firmware not found")
@@ -124,8 +134,7 @@ async def delete_firmware(firmware_id: int, db: Session = Depends(get_db)):
     if os.path.exists(firmware.file_path):
         os.remove(firmware.file_path)
 
-    # Delete database entry
-    db.delete(firmware)
-    db.commit()
+    # Delete storage entry
+    storage.delete_firmware(firmware_id)
 
     return {"status": "success", "message": "Firmware deleted"}

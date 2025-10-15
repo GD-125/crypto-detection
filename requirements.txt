@@ -4,10 +4,10 @@ uvicorn[standard]==0.34.0
 pydantic==2.10.3
 pydantic-settings==2.6.1
 
-# Database
-sqlalchemy==2.0.36
-psycopg2-binary==2.9.10
-alembic==1.14.0
+# DATABASE DISABLED - All database packages commented out
+# sqlalchemy==2.0.36
+# psycopg2-binary==2.9.10
+# alembic==1.14.0
 
 # Deep Learning & AI
 torch==2.5.1

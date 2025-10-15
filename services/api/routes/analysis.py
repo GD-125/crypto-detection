@@ -1,89 +1,100 @@
 """
 Analysis Triggering and Management Routes
+DATABASE DISABLED - Using in-memory storage
 """
 
 from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks
-from sqlalchemy.orm import Session
+# DATABASE DISABLED
+# from sqlalchemy.orm import Session
 from typing import List, Optional
 from datetime import datetime
 
-from ..database import get_db
-from ..models import schemas, models
-from ...binary_analyzer.analyzer import BinaryAnalyzer
-from ...ai_engine.inference import CryptoDetector
-from ...feature_extractor.extractor import FeatureExtractor
+# DATABASE DISABLED - Using in-memory storage instead
+# from ..database import get_db
+# from ..models import schemas, models
+from ..storage import get_storage
+from ..models import schemas
+# Lazy imports - these modules will be imported when actually needed
+# from ...binary_analyzer.analyzer import BinaryAnalyzer
+# from ...ai_engine.inference import CryptoDetector
+# from ...feature_extractor.extractor import FeatureExtractor
 
 router = APIRouter()
 
-def run_analysis_task(firmware_id: int, db: Session):
+def run_analysis_task(firmware_id: int):
     """
     Background task for running firmware analysis
     """
+    storage = get_storage()
+
     try:
         # Get firmware
-        firmware = db.query(models.Firmware).filter(
-            models.Firmware.id == firmware_id
-        ).first()
+        firmware = storage.get_firmware_by_id(firmware_id)
 
         if not firmware:
             return
 
         # Update status
-        firmware.status = "analyzing"
-        db.commit()
+        storage.update_firmware_status(firmware_id, "analyzing")
+
+        # Lazy import of analysis modules
+        # NOTE: Import these when your analyzer modules are ready
+        # from ...binary_analyzer.analyzer import BinaryAnalyzer
+        # from ...ai_engine.inference import CryptoDetector
+        # from ...feature_extractor.extractor import FeatureExtractor
 
         # Initialize analyzers
-        binary_analyzer = BinaryAnalyzer()
-        feature_extractor = FeatureExtractor()
-        crypto_detector = CryptoDetector()
+        # binary_analyzer = BinaryAnalyzer()
+        # feature_extractor = FeatureExtractor()
+        # crypto_detector = CryptoDetector()
 
         # Step 1: Binary disassembly
-        disassembly_result = binary_analyzer.disassemble(firmware.file_path)
+        # disassembly_result = binary_analyzer.disassemble(firmware.file_path)
 
         # Step 2: Feature extraction
-        features = feature_extractor.extract(disassembly_result)
+        # features = feature_extractor.extract(disassembly_result)
 
         # Step 3: AI inference
-        predictions = crypto_detector.detect(features)
+        # predictions = crypto_detector.detect(features)
+
+        # TEMPORARY: Mock predictions for testing
+        predictions = {
+            "functions": [],
+            "confidences": {},
+            "explanations": {},
+            "metadata": {"note": "Analysis modules not yet integrated"}
+        }
 
         # Create analysis result
-        result = models.AnalysisResult(
+        storage.add_analysis_result(
             firmware_id=firmware_id,
-            analysis_time=datetime.utcnow(),
-            status="completed",
-            detected_functions=predictions["functions"],
-            confidence_scores=predictions["confidences"],
-            explanations=predictions["explanations"],
-            metadata=predictions["metadata"]
+            detected_functions=predictions.get("functions", []),
+            confidence_scores=predictions.get("confidences", {}),
+            explanations=predictions.get("explanations", {}),
+            metadata=predictions.get("metadata", {})
         )
 
-        db.add(result)
-
         # Update firmware status
-        firmware.status = "analyzed"
-        firmware.last_analysis = datetime.utcnow()
-
-        db.commit()
+        storage.update_firmware_status(firmware_id, "analyzed")
 
     except Exception as e:
-        firmware.status = "error"
-        firmware.error_message = str(e)
-        db.commit()
+        storage.update_firmware_status(firmware_id, "error", str(e))
 
 @router.post("/start/{firmware_id}", response_model=schemas.AnalysisResponse)
 async def start_analysis(
     firmware_id: int,
     background_tasks: BackgroundTasks,
     options: Optional[schemas.AnalysisOptions] = None,
-    db: Session = Depends(get_db)
+    # DATABASE DISABLED
+    # db: Session = Depends(get_db)
 ):
     """
     Start analysis for a specific firmware
     """
+    storage = get_storage()
+
     # Check if firmware exists
-    firmware = db.query(models.Firmware).filter(
-        models.Firmware.id == firmware_id
-    ).first()
+    firmware = storage.get_firmware_by_id(firmware_id)
 
     if not firmware:
         raise HTTPException(status_code=404, detail="Firmware not found")
@@ -92,7 +103,7 @@ async def start_analysis(
         raise HTTPException(status_code=400, detail="Analysis already in progress")
 
     # Add background task
-    background_tasks.add_task(run_analysis_task, firmware_id, db)
+    background_tasks.add_task(run_analysis_task, firmware_id)
 
     return {
         "firmware_id": firmware_id,
@@ -102,13 +113,16 @@ async def start_analysis(
     }
 
 @router.get("/status/{firmware_id}", response_model=schemas.AnalysisStatus)
-async def get_analysis_status(firmware_id: int, db: Session = Depends(get_db)):
+async def get_analysis_status(
+    firmware_id: int,
+    # DATABASE DISABLED
+    # db: Session = Depends(get_db)
+):
     """
     Get analysis status for a specific firmware
     """
-    firmware = db.query(models.Firmware).filter(
-        models.Firmware.id == firmware_id
-    ).first()
+    storage = get_storage()
+    firmware = storage.get_firmware_by_id(firmware_id)
 
     if not firmware:
         raise HTTPException(status_code=404, detail="Firmware not found")
@@ -124,20 +138,20 @@ async def get_analysis_status(firmware_id: int, db: Session = Depends(get_db)):
 async def start_batch_analysis(
     firmware_ids: List[int],
     background_tasks: BackgroundTasks,
-    db: Session = Depends(get_db)
+    # DATABASE DISABLED
+    # db: Session = Depends(get_db)
 ):
     """
     Start batch analysis for multiple firmware files
     """
+    storage = get_storage()
     results = []
 
     for firmware_id in firmware_ids:
-        firmware = db.query(models.Firmware).filter(
-            models.Firmware.id == firmware_id
-        ).first()
+        firmware = storage.get_firmware_by_id(firmware_id)
 
         if firmware and firmware.status != "analyzing":
-            background_tasks.add_task(run_analysis_task, firmware_id, db)
+            background_tasks.add_task(run_analysis_task, firmware_id)
             results.append({
                 "firmware_id": firmware_id,
                 "status": "started"

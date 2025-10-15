@@ -1,5 +1,5 @@
 """
-Database Models for ERP-Integrated Cryptographic Detection System
+Database Models for CRYPTERA: AI Based Cryptographic Primitives Detection in Firmware
 """
 
 from sqlalchemy import Column, Integer, String, DateTime, Text, JSON, Float, ForeignKey

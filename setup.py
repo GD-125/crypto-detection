@@ -14,7 +14,7 @@ setup(
     name="crypto-detection-system",
     version="1.0.0",
     author="SIH 2025 IT Coders Team",
-    description="ERP-Integrated Cryptographic Function Detection System",
+    description="CRYPTERA: AI Based Cryptographic Primitives Detection in Firmware",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/GD-125/crypto-detection",

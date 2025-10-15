@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Startup script for Cryptographic Function Detection System
+# Startup script for Cryptographic Primitives Detection System
 
 echo "=========================================="
-echo "Cryptographic Function Detection System"
+echo "Cryptographic Primitives Detection System"
 echo "=========================================="
 echo ""
 

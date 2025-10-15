@@ -1,5 +1,4 @@
-# ERP-Integrated Cryptographic Function Detection System
-
+# CRYPTERA: AI BASED CRYPTOGRAPHIC PRIMITIVES DETECTION IN FIRMWARE
 A comprehensive system for detecting cryptographic functions in firmware binaries using AI-powered analysis, multi-architecture binary disassembly, and explainable AI.
 
 ## Overview
@@ -28,19 +27,19 @@ This system provides an end-to-end solution for analyzing firmware binaries to d
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                     Frontend Dashboard                       │
-│                    (React + REST API)                        │
+│                     Frontend Dashboard                      │
+│                    (React + REST API)                       │
 └────────────────────────┬────────────────────────────────────┘
                          │
-┌────────────────────────▼────────────────────────────────────┐
-│                     FastAPI Backend                          │
+┌────────────────────────▼──────────────────────────────────┐
+│                     FastAPI Backend                       │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
 │  │  Firmware    │  │   Analysis   │  │   Results    │     │
 │  │  Management  │  │  Controller  │  │   Manager    │     │
 │  └──────────────┘  └──────────────┘  └──────────────┘     │
-└────────────┬────────────────┬────────────────┬─────────────┘
-             │                │                │
-    ┌────────▼────────┐  ┌───▼──────┐  ┌─────▼─────────┐
+└────────────┬─────────────────┬───────────────┬────────────┘
+             │                 │               │
+    ┌────────▼─────────┐  ┌────▼─────┐  ┌──────▼────────┐
     │  Binary Analyzer │  │ Feature  │  │  AI Engine    │
     │    (Ghidra)      │  │Extractor │  │  (PyTorch)    │
     └──────────────────┘  └──────────┘  └───────────────┘
@@ -115,7 +114,7 @@ Project/
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/GD-125/crypto-detection.git
    cd Project
    ```
 
@@ -390,7 +389,7 @@ If you use this system in your research, please cite:
 
 ```bibtex
 @software{crypto_detection_system,
-  title={ERP-Integrated Cryptographic Function Detection System},
+  title={CRYPTERA: AI Based Cryptographic Primitives Detection in Firmware},
   author={DevQueens},
   year={2025},
   url={https://github.com/GD-125/crypto-detection}

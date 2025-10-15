@@ -1,7 +1,7 @@
 """
 Model Training Script
 
-Trains the cryptographic function detection model.
+Trains the cryptographic primitives detection model.
 """
 
 import os

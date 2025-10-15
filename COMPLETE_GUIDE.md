@@ -1,4 +1,4 @@
-# Complete Guide - ERP-Integrated Cryptographic Function Detection System
+# Complete Guide - # CRYPTERA: AI BASED CRYPTOGRAPHIC PRIMITIVES DETECTION IN FIRMWARE
 
 ## 📚 Documentation Index
 

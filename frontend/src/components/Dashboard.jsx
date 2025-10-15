@@ -33,7 +33,7 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard">
-      <h1>Cryptographic Function Detection System</h1>
+      <h1>Cryptographic Primitives Detection System</h1>
 
       {/* Statistics Cards */}
       <div className="stats-grid">

@@ -1,5 +1,5 @@
 """
-AI Inference Engine for Cryptographic Function Detection
+AI Inference Engine for Cryptographic Primitives Detection
 Uses PyTorch for deep learning inference and Captum for explainability
 """
 
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 class CryptoDetectionModel(nn.Module):
     """
-    Neural Network Model for Cryptographic Function Detection
+    Neural Network Model for Cryptographic Primitives Detection
     Architecture: Multi-layer Transformer-based classifier
     """
 
@@ -114,7 +114,7 @@ class CryptoDetector:
 
     def detect(self, features: np.ndarray) -> Dict[str, Any]:
         """
-        Detect cryptographic functions from extracted features
+        Detect Cryptographic Primitives from extracted features
 
         Args:
             features: Numpy array of extracted features

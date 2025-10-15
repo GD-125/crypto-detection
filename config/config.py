@@ -1,5 +1,5 @@
 """
-Configuration Module for Cryptographic Function Detection System
+Configuration Module for Cryptographic Primitives Detection System
 """
 
 import os

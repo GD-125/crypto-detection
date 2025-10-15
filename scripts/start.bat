@@ -1,7 +1,7 @@
 @echo off
 
 echo ==========================================
-echo Cryptographic Function Detection System
+echo Cryptographic Primitives Detection System
 echo ==========================================
 echo.
 

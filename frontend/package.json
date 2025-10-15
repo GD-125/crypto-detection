@@ -1,7 +1,7 @@
 {
   "name": "crypto-detection-frontend",
   "version": "1.0.0",
-  "description": "ERP-Integrated Cryptographic Function Detection Dashboard",
+  "description": "CRYPTERA: AI Based Cryptographic Primitives Detection in Firmware",
   "private": true,
   "dependencies": {
     "react": "^18.2.0",

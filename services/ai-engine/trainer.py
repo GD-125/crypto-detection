@@ -1,5 +1,5 @@
 """
-Training Module for Cryptographic Function Detection Model
+Training Module for Cryptographic Primitives Detection Model
 """
 
 import torch
